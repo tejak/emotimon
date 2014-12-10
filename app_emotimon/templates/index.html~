@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Emotimon</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    
+    <script src="/static/graph.js"></script>
+    <script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.time.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/jquery.flot.axislabels.js"></script>
+  </head>
+  
+  <body>
+    <center>
+      <h2> Microphone Data </h2>
+      <div id="micGraph" style="margin:40px;width:600px;height:300px;"></div>
+      <hr/>
+      <h2> Accelerometer Data </h2>
+      <div id="accGraph" style="margin:40px;width:600px;height:300px;"></div>
+    </center>
+  </body>
+</html>
+

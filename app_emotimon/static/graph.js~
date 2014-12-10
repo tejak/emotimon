@@ -1,0 +1,120 @@
+$( document ).ready(function() {
+
+
+    // For extracting date info from JSON
+    function getDate(dateString) {
+	return new Date(dateString).getTime();
+    }
+    
+    // For x-axes of all graphs
+    var dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"];
+    
+    function micGraph() {
+	// Defining days of the week
+	
+	$.getJSON("/emotimon/phone/data/mic", function(data) {
+	    var d1 = [];
+	    $.each( data.data, function( dataId, plotData ) {
+		plotData[0] = getDate(plotData[0])
+		d1.push(plotData);
+	    });
+
+	    // Customizing graph
+	    var options = {
+		grid: {
+		    markings: [
+                        {xaxis: { from: 0, to: 6 },color: "#C11B17"},
+                        {xaxis: { from: 6, to: 100},color: "#FDD017"}]
+                },
+            
+
+		axisLabels: {
+		    show: true
+		},
+		xaxes: [
+		    {
+			mode: "time",
+			tickFormatter: function (val, axis) {                                    
+                            return dayOfWeek[new Date(val).getDay()];                 
+			},  
+			timeformat: "%m/%d %H:%M",
+			tickSize: [1, "day"],
+			color: "black",        
+			axisLabel: "Day of the Week",
+			axisLabelUseCanvas: true,
+			axisLabelFontSizePixels: 12,
+			axisLabelFontFamily: 'Verdana, Arial',
+			axisLabelPadding: 10
+		    }],
+		yaxes: [{
+		    position: 'left',
+		    axisLabel: 'Decibels',
+		    axisLabelFontSizePixels: 12,
+                    axisLabelFontFamily: 'Verdana, Arial',
+                    axisLabelPadding: 10
+		}]
+	    };
+	    
+	    
+	    $.plot($("#micGraph"), [d1], options);
+	});
+    };
+    
+    function accGraph() {
+	$.getJSON("/emotimon/phone/data/acc", function(data) {
+	    var dx = [];
+	    var dy = [];
+	    var dz = [];
+	    $.each( data.data, function( dataId, plotData ) {
+		dx.push([getDate(plotData[0]),plotData[1]]);
+		dy.push([getDate(plotData[0]),plotData[2]]);
+		dz.push([getDate(plotData[0]),plotData[3]]);
+	    });
+	    acc_data = [{ data:dx, label:"pitch (x-axis rotation)", lines:{show:true}},
+			{ data:dy, label:"roll (y-axis rotation)", lines:{show:true}},
+			{ data:dz, label:"azimuth (z-axis rotation)", lines:{show:true}}];
+	    
+	    var options = {
+                grid: {
+		    markings: [
+                        {xaxis: { from: 0, to: 6 },color: "#C11B17"},
+                        {xaxis: { from: 6, to: 100},color: "#FDD017"}]
+                },
+		
+		
+                axisLabels: {
+		    show: true
+                },
+                xaxes: [
+		    {
+                        mode: "time",
+                        tickFormatter: function (val, axis) {
+			    return dayOfWeek[new Date(val).getDay()];
+                        },
+                        timeformat: "%m/%d %H:%M",
+                        tickSize: [1, "day"],
+                        color: "black",
+                        axisLabel: "Day of the Week",
+                        axisLabelUseCanvas: true,
+                        axisLabelFontSizePixels: 12,
+                        axisLabelFontFamily: 'Verdana, Arial',
+                        axisLabelPadding: 10
+		    }],
+		yaxes: [{
+                    position: 'left',
+		    axisLabel: 'Decibels',
+                    axisLabelFontSizePixels: 12,
+                    axisLabelFontFamily: 'Verdana, Arial',
+                    axisLabelPadding: 10
+                }]
+            };
+		
+	    $.plot($("#accGraph"), acc_data, options);
+	});
+    };
+    
+    micGraph();
+    accGraph();
+    
+});
+

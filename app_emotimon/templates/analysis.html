@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Emotimon</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    
+    <script src="/static/graph.js"></script>
+    <script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="http://www.flotcharts.org/flot/jquery.flot.time.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/jquery.flot.axislabels.js"></script>
+  </head>
+  
+  <body>
+    <center>
+      <div class="block">
+        <center> <h2>Emotion + Data Analysis </h2> </center>
+        <table class="table">
+        <tr>
+        <td> Emotion </td>
+        <td> Heart Beat </td>
+        <td> Watch Acc X </td>
+        <td> Watch Acc Y </td>
+        <td> Watch Acc Z </td>
+        <td> Microphone </td>
+        <td> Phone Acc X </td>
+        <td> Phone Acc Y </td>
+        <td> Phone Acc Z </td>
+        </tr>
+        {% for emotion, data in analysis.items %}
+        <tr class="">
+        <td> {{ emotion }} </td>
+        <td> {{ data.w_hr }} </td>
+        <td> {{ data.w_x }} </td>
+        <td> {{ data.w_y }} </td>
+        <td> {{ data.w_z }} </td>
+        <td> {{ data.p_m }} </td>
+        <td> {{ data.p_x }} </td>
+        <td> {{ data.p_y }} </td>
+        <td> {{ data.p_z }} </td>
+        </tr>
+        {% endfor %}
+        </table>
+      </div>
+
+    </center>
+  </body>
+</html>
+

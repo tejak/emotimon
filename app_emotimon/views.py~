@@ -1,0 +1,129 @@
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+import time
+import app_emotimon.models as Models
+
+# Create your views here.
+
+@csrf_exempt
+def index(request):
+    context = RequestContext(request)
+    return render_to_response('app_emotimon/templates/index.html', {}, context)
+
+@csrf_exempt
+def phone_mic_data(request):
+    sensor_data = Models.SensorData.objects.all()
+    mic_data = [[i.id, i.mic_avg] for i in sensor_data]
+
+    resp = {'data': mic_data}
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+@csrf_exempt
+def phone_acc_data(request):
+    sensor_data = Models.SensorData.objects.all()
+    acc_data = [[i.id, i.acc_phone_x_avg, i.acc_phone_y_avg, i.acc_phone_z_avg] for i in sensor_data]
+
+    resp = {'data': acc_data}
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+@csrf_exempt
+def phone_store(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except KeyError:
+            return HttpResponse("Malformed data!")
+
+        # Datetime - to get x-axis
+        datetime_str = data['date'] + " " + data['time']
+        datetime = time.strftime("%Y-%m-%d %H:%M", time.strptime(datetime_str,"%m/%d/%Y %H:%M"))
+
+	z_data = data['aziData']
+        z_data_avg = sum(z_data) / len(z_data)
+        
+        x_data = data['pitchData']
+        x_data_avg = sum(x_data) / len(x_data)
+        
+	y_data = data['rollData']
+        y_data_avg = sum(y_data) / len(y_data)
+        
+	mic_data = data['micData']
+        mic_data_avg = sum(mic_data) / len(mic_data)
+       
+        # Emotion
+        emotion = data['emotion']
+
+        data_points = Models.SensorData.objects.filter(timestamp=datetime)
+        
+	if len(data_points) > 0:
+            data_point = data_points[0] 
+            data_point.mic_pts = repr(mic_data)
+	    data_point.mic_avg = mic_data_avg
+	    data_point.acc_phone_x_pts = repr(x_data)
+	    data_point.acc_phone_x_avg = x_data_avg
+            data_point.acc_phone_y_pts = repr(y_data)
+            data_point.acc_phone_y_avg = y_data_avg
+            data_point.acc_phone_z_pts = repr(z_data)
+            data_point.acc_phone_z_avg = z_data_avg
+	    data_point.save()
+        else: 
+            data_point = Models.SensorData(timestamp=datetime, mic_pts=repr(mic_data), mic_avg=mic_data_avg, acc_phone_x_pts=repr(x_data), acc_phone_x_avg=x_data_avg, acc_phone_y_pts=repr(y_data), acc_phone_y_avg=y_data_avg, acc_phone_z_pts=repr(z_data), acc_phone_z_avg=z_data_avg)
+            data_point.save()
+         
+	return HttpResponse("Got json data %s, average z %f, average x %f, average y %f, average mic %f" % (data, z_data_avg, x_data_avg, y_data_avg, mic_data_avg))
+    
+    return HttpResponse('phone store it')
+
+@csrf_exempt
+def watch_heart_store(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except KeyError:
+            return HttpResponse("Malformed data!")
+
+        userId = data['id']
+
+        datetime_str = data['date'] + " " + data['timestamp']
+        datetime = time.strftime("%Y-%m-%d %H:%M", time.strptime(datetime_str,"%m/%d/%Y %H:%M"))
+
+        heart_beat = data['heart_beat']
+        filtered_heart_beat = [x for x in heart_beat if x != 0]
+        len_filtered = len(filtered_heart_beat)
+        if len_filtered > 0:
+            avg = sum(filtered_heart_beat) / len_filtered
+        else:
+            avg = 0
+
+        return HttpResponse("Got json data %s, and the avg heart rate was %f, %s" % (data, avg, repr(datetime)))
+
+    return HttpResponse('watch heart store it')
+
+@csrf_exempt
+def watch_acc_store(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except KeyError:
+            return HttpResponse("Malformed data!")
+
+        userId = data['id']
+
+        datetime_str = data['date'] + " " + data['timestamp']
+        datetime = time.strftime("%Y-%m-%d %H:%M", time.strptime(datetime_str,"%m/%d/%Y %H:%M"))
+
+        heart_beat = data['heart_beat']
+        filtered_heart_beat = [x for x in heart_beat if x != 0]
+        len_filtered = len(filtered_heart_beat)
+        if len_filtered > 0:
+            avg = sum(filtered_heart_beat) / len_filtered
+        else:
+            avg = 0
+
+        return HttpResponse("Got json data %s, and the avg heart rate was %f, %s" % (data, avg, repr(datetime)))
+
+    return HttpResponse('watch acc store it')
